@@ -14,3 +14,6 @@ cd ../../stevebyu.github.io/
 git add -u
 git commit -m "added changes to fashionablylate pwa"
 git push origin master
+
+cd $wiw
+
