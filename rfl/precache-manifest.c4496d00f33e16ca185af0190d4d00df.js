@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "3034baa32fa07b1afd62",
+    "revision": "c71268b7425509582e2d",
     "url": "/rfl/static/css/main.73ffee87.chunk.css"
   },
   {
-    "revision": "3034baa32fa07b1afd62",
-    "url": "/rfl/static/js/main.3034baa3.chunk.js"
+    "revision": "c71268b7425509582e2d",
+    "url": "/rfl/static/js/main.c71268b7.chunk.js"
   },
   {
     "revision": "69e54f543c592baf0b40",
@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/rfl/static/media/logo.5d5d9eef.svg"
   },
   {
-    "revision": "d125e91508fe6c40fe219d79ead745c3",
+    "revision": "8934ebe0303c7c358d98f836cbfe1ae2",
     "url": "/rfl/index.html"
   }
 ];
