@@ -20,7 +20,7 @@ self.__precacheManifest = [
     "url": "/rsym/static/media/logo.5d5d9eef.svg"
   },
   {
-    "revision": "6cee65816d9ef23419a6944ba933ab2c",
+    "revision": "ecdbdde07008e57e34249286ce46ef48",
     "url": "/rsym/index.html"
   }
 ];
