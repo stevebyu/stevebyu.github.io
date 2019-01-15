@@ -1,6 +1,6 @@
 {
-  "short_name": "try idb",
-  "name": "try idb",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
