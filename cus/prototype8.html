@@ -137,7 +137,7 @@
 						<span class="spaced">{{ possibility.text }}</span>
 					</li>
 				</ul>
-				<input type="text" @focus="setCustomResponseFocus(true)" @blur="setCustomResponseFocus(false)" placeholder="custom response" v-model="customResponse"  /><br />
+				<input type="text" @focus="setCustomResponseFocus(true)" @blur="setCustomResponseFocus(false)" placeholder="custom response" v-model="customResponse"  /><br /><br />
 				<button @keypress.prevent="" @click.prevent="correctTheChat()">save</button>
 			</div>
 		</div>
@@ -302,29 +302,31 @@ console.log(highestId);
 				this.correctionPair.selectedCorrection = this.customResponse !== '' ? this.customResponse : theCorrection;
 				console.log(this.correctionPair);
 				this.customResponse = '';
+				
 			}
 		},
 		onKeyPress(event) {
-			if (this.customResponseFocused) return;
 			if (event.key == 'Enter') {
 				console.log('enter pressed');
 				this.correctTheChat();
+			} else if (this.customResponseFocused) {
+				return;
 			} else {
 				okKeysOnesToCorrect = ['1','2','3','4','5'];
 				if (okKeysOnesToCorrect.includes(event.key)) {
 					var doSelect = parseInt(event.key) - 1;
 					this.selectChat(doSelect);
 				}
-				okKeysPossibleCorrections = ['a','b','c','d','e'];
+				var allTheLetters = 'abcdefghijklmnopqrstuvwxyz';
+				var okKeysPossibleCorrections = allTheLetters.split('');
 				if (okKeysPossibleCorrections.includes(event.key)) {
-					var mappedLettersToIndex = {
-						'a': 0,
-						'b': 1,
-						'c': 2,
-						'd': 3,
-						'e': 4,
-					};
-					this.selectCorrection(mappedLettersToIndex[event.key]);
+					var mappedLettersToIndex = {};
+					for (x in this.correctPossibilities) {
+						mappedLettersToIndex[okKeysPossibleCorrections[x]] = x;
+					}
+					if (mappedLettersToIndex[event.key] !== undefined) {
+						this.selectCorrection(mappedLettersToIndex[event.key]);
+					}
 				}
 			}
 		},
