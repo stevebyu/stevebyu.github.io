@@ -2258,15 +2258,25 @@ span.CodeMirror-selectedtext { background: none; }
           File Manager
 		</a></div></div></div>
 		<div data-v-2f6d8087="" class="main-content">
-			<a href="javascript:return false;" onClick="changePrototype('a')">prototype A</a> * <a href="javascript:return false;" onClick="changePrototype('b')">prototype B</a> * <a href="javascript:return false;" onClick="changePrototype('c')">prototype C</a>
-			<iframe id="cus" src="ui.html" description="chatbot update system" style="border: none; height: 860px; width: 800px;" ></iframe>
+			<span id="link_a" onClick="changePrototype('a')">prototype A</span> * <span id="link_b" onClick="changePrototype('b')">prototype B</span> * <span id="link_c" style="font-weight:bold" onClick="changePrototype('c')">prototype C</span>
+			<br /><br />
+			<iframe id="cus" src="prototype9c.html" description="chatbot update system" style="border: none; height: 860px; width: 800px;" ></iframe>
 		</div>
 
   
   <script>window.config = {"appName":"BYU Playable Case Studies","locale":"en","locales":{"en":"EN","zh-CN":"\u4e2d\u6587","es":"ES"},"githubAuth":null};</script>
 
   <script>
-  	function changePrototype(which) {
+	document.getElementById('link_a').style.setProperty('text-decoration', 'underline');
+	document.getElementById('link_b').style.setProperty('text-decoration', 'underline');
+	document.getElementById('link_c').style.setProperty('text-decoration', 'underline');
+
+	document.getElementById('link_c').style.setProperty('font-weight', 'bold');
+	function changePrototype(which) {
+		document.getElementById('link_a').style.setProperty('font-weight', null);
+		document.getElementById('link_b').style.setProperty('font-weight', null);
+		document.getElementById('link_c').style.setProperty('font-weight', null);
+		document.getElementById('link_' + which).style.setProperty('font-weight', 'bold');
 		var prototypeNumber = '9';
 		const queryString = window.location.search;
 		if (queryString !== '') {
