@@ -5,6 +5,10 @@
 	<title>cus - chatbot update system</title>
 	<!--<link rel="stylesheet" href="./styles.css" />-->
 	<style>
+		#version {
+			color: gray;
+			font-size: 15px;
+		}
 		#pageTitle {
 			font-size: 30px;
 			float: right;
@@ -16,19 +20,49 @@
 		.left {
 			float: left;
 		}
-		.clickable {
+		.clickable_a {
 			cursor: pointer;
 		}
-		.reg {
+		.clickable_b {
+			cursor: pointer;
+		}
+		.clickable_c {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;		
+		}
+		.reg_a {
+
+		}
+		.reg_b {
+
+		}
+		.reg_c {
 			background-color: #28a745;
 		}
-		.done {
+		.done_a {
+			background-color: #dc3545;
+		}
+		.done_b {
 			background-color: #000000;
 			color: white;
 		}
-		.selectCorrect {
+		.done_c {
 			background-color: #000000;
 			color: white;
+		}
+		.selectCorrect_a {
+		
+		}
+		.selectCorrect_b {
+			background-color: #000000;
+			color: white;
+		}		
+		.selectCorrect_c {
+			background-color: #000000;
+			color: white;		
 		}
 		.centered {
 			text-align: center;
@@ -36,8 +70,22 @@
 		.sel {
 			background-color: lightpink;
 		}
-		.boxed {
+		.boxed_a {
 			border: 1px solid black;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.boxed_b {
+			border: 1px solid black;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.boxed_c {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 20px;
 			padding-top: 20px;
 			padding-bottom: 20px;
 			padding-left: 20px;
@@ -80,25 +128,58 @@
 		.clear {
 			clear: both;
 		}
-		#workarea1 {
+		.workarea1_a {
 			float: left;
 			border-left: 1px solid black;
 			min-height: 222px;
 		}
-		#workarea2 {
+		.workarea1_b {
+			float: left;
+			border-left: 1px solid black;
+			min-height: 222px;
+		}
+		.workarea1_c {
+			float: left;
+			min-height: 222px;
+		}
+		.workarea2_a {
 			float: left;
 			border-top: 1px solid black;
 			border-right: 1px solid black;
 			border-bottom: 1px solid black;
 			padding-left: 20px;
+			background-color: #28a745;
+			min-height: 400px;
+		}
+		.workarea2_b {
+			float: left;
+			border-top: 1px solid black;
+			border-right: 1px solid black;
+			border-bottom: 1px solid black;
+			padding-left: 20px;
+			background-color: #28a745;
+			min-height: 400px;
+		}
+		.workarea2_c {
+			float: left;
+			padding-left: 20px;
 			background-color: #ffffff;
 			min-height: 400px;
 		}
-		.chats {
+		.chats_a {
 			width: 300px;
 			border-top: 1px solid black;
 			border-left: 1px solid black;
 			border-bottom: 1px solid black;
+		}
+		.chats_b {
+			width: 300px;
+			border-top: 1px solid black;
+			border-left: 1px solid black;
+			border-bottom: 1px solid black;
+		}
+		.chats_c {
+			width: 300px;
 		}
 		.selected {
 			border: 0px;
@@ -259,22 +340,59 @@
 			{{ correctedMonth }} this month<br />
 		</div>
 	</div>
-	<div id="pageTitle">CUS - Chatbot Update System</div>
+	<div id="pageTitle">CUS - Chatbot Update System <span id="version">{{ prototypeVersion }}</span></div>
 	<br class="clear" />
 	<hr />
 	<div id="workareas">
-		<div id="workarea1" ref="workarea11">
-			<div class="done centered">{{ doneMessage }}<br /><br /></div>
-			<div class="chats" v-for="(toCorrect, index) in onesToCorrect">
-				<span class="clickable" :key="toCorrect.id" @click="selectChat(index)">
+		<div :class="{
+			workarea1_a: prototypeVersion === 'a',
+			workarea1_b: prototypeVersion === 'b',
+			workarea1_c: prototypeVersion === 'c',
+		}" ref="workarea11">
+			<div :class="{
+				done_a: prototypeVersion === 'a',
+				done_b: prototypeVersion === 'b',
+				done_c: prototypeVersion === 'c',
+				centered: true
+			}">{{ doneMessage }}<br /><br /></div>
+			<div :class="{
+				chats_a: prototypeVersion === 'a',
+				chats_b: prototypeVersion === 'b',
+				chats_c: prototypeVersion === 'c',
+			}" v-for="(toCorrect, index) in onesToCorrect">
+				<span :class="{
+					clickable_a: prototypeVersion === 'a',
+					clickable_b: prototypeVersion === 'b',
+					clickable_c: prototypeVersion === 'c',
+				}" :key="toCorrect.id" @click="selectChat(index)">
 					<div :class="{ sas: !toCorrect.selected, selected: toCorrect.selected }" v-for="corr in toCorrect.chats">{{ corr }}<br /><br /></div>
 				</span>
 			</div>
 		</div>
-		<div id="workarea2" :style="{ height: workarea1Height }">
-			<div class="select"><div class="selectCorrect centered">select correct responses<br /><br /></div>
+		<div :class="{
+			workarea2_a: prototypeVersion === 'a',
+			workarea2_b: prototypeVersion === 'b',
+			workarea2_c: prototypeVersion === 'c',
+		}" :style="{ height: workarea1Height }">
+			<div class="select"><div :class="{
+				selectCorrect_a: prototypeVersion === 'a',
+				selectCorrect_b: prototypeVersion === 'b',
+				selectCorrect_c: prototypeVersion === 'c',
+				centered: true,
+			}">possible correct responses<br /><br /></div>
 				<ul>
-					<li :class="{ clickable: true, boxed: true, reg: !possibility.selected, sel: possibility.selected }" v-for="(possibility, index) in correctPossibilities" @click.prevent="selectCorrection(index)">
+					<li :class="{
+						clickable_a: true && prototypeVersion === 'a',
+						clickable_b: true && prototypeVersion === 'a',
+						clickable_c: true && prototypeVersion === 'a',
+						boxed_a: true && prototypeVersion === 'a',
+						boxed_b: true && prototypeVersion === 'b',
+						boxed_c: true && prototypeVersion === 'c',
+						reg_a: !possibility.selected && prototypeVersion === 'a',
+						reg_b: !possibility.selected && prototypeVersion === 'b',
+						reg_c: !possibility.selected && prototypeVersion === 'c',
+						sel: possibility.selected
+					}" v-for="(possibility, index) in correctPossibilities" @click.prevent="selectCorrection(index)">
 						<span class="spaced">{{ possibility.text }}</span>
 					</li>
 				</ul>
@@ -294,12 +412,20 @@
 const app = Vue.createApp({
 	created() {
 		window.addEventListener('keypress', this.onKeyPress);
+		const queryString = window.location.search;
+		if (queryString !== '') {
+			const urlParams = new URLSearchParams(queryString);
+			const version = urlParams.get('v');
+			this.prototypeVersion = version;
+		}
+		console.log(this.prototypeVersion);
 	},
 	beforeUnmount() {
 		window.removeEventListener('keypress', this.onKeyPress);
 	},
 	data() {
 		return {
+			prototypeVersion: '',
 			responsesHeight: 4,
 			correctionPair: {},
 			customResponseFocused: false,
@@ -407,10 +533,6 @@ const app = Vue.createApp({
 					if (this.onesToCorrect[x].id !== this.selectedId) {
 						newOnesToCorrect.push(this.onesToCorrect[x]);
 					}
-				}
-				if (newOnesToCorrect.length === 0) {
-console.log('asdf');
-					this.doneMessage = 'there are no more to correct right now. good job!';
 				}
 				var highestId = 0;
 				var allPossibilities = [];
