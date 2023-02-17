@@ -483,7 +483,7 @@ const app = Vue.createApp({
 		const secondsSinceEpoch = Math.round(Date.now() / 1000)
 
 		const now = new Date().toLocaleString([], {hour12: false})
-		const key =  'begin-' + now
+		const key =  'p12' + this.prototypeVersion + '-begin-' + now
 		localStorage.setItem(key, secondsSinceEpoch)
 	},
 	beforeUnmount() {
@@ -640,7 +640,7 @@ console.log(highestId);
 
 					console.log('done')
 					const now = new Date().toLocaleString([], {hour12: false})
-					const key =  'end-' + now
+					const key =  'p12' + this.prototypeVersion + '-end-' + now
 					localStorage.setItem(key, secondsSinceEpoch)
 
 					this.dispResults = '['
