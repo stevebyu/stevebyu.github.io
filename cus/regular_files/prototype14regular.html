@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+	<title>cus - chatbot update system</title>
+	<!--<link rel="stylesheet" href="./styles.css" />-->
+	<style>
+		#version {
+			color: gray;
+			font-size: 15px;
+		}
+		#pageTitle {
+			font-size: 30px;
+		}
+		div {
+			/*border: 1px solid black;*/
+		}
+		#context {
+			border: 1px solid black;
+			width: 490px;
+		}
+		.left {
+			float: left;
+		}
+		#workareas {
+			width: 470px;
+		}
+		.clickable_a {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.clickable_b {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.clickable_c {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.reg_a {
+			background-color: #28a745;
+		}
+		.reg_b {
+			background-color: #28a745;
+		}
+		.reg_c {
+			background-color: #28a745;
+		}
+		.done_a {
+			display: none;
+		}
+		.done_b {
+			width: 400px;
+			background-color: #000000;
+			color: white;
+		}
+		.done_c {
+			width: 400px;
+			background-color: #000000;
+			color: white;
+		}
+		.student_a {
+			border: 1px solid black;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			float: left;
+		}
+		.student_b {
+
+		}
+		.student_c {
+
+		}
+		.selectCorrect_a {
+			display: none;
+		}
+		.selectCorrect_b {
+			background-color: #000000;
+			color: white;
+		}		
+		.selectCorrect_c {
+			background-color: #000000;
+			color: white;
+		}
+		.centered {
+			text-align: center;
+		}
+		.sel {
+			background-color: lightpink;
+		}
+		.boxed_a {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			float: right;
+		}
+		.boxed_b {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.boxed_c {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.spaced {
+			margin-top: 10px;
+		}
+		.reports {
+			margin-right: 15px;
+			border: 1px solid black;
+		}
+		.big-numbers {
+			font-size: 70pt;
+		}
+		.red {
+			color: red;
+		}
+		.green {
+			color: green;
+		}
+		.inappropriateNum {
+			width: 50%;
+			text-align: center;
+		}
+		.inappropriateDesc {
+			width: 40%;
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+		.correctedNum {
+			text-align: center;
+		}
+		.correctedDesc {
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+		.help {
+			float: right;
+		}
+		.clear {
+			clear: both;
+		}
+		.workarea1_a {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea1_b {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea1_c {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea2_a {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.workarea2_b {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.workarea2_c {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.chats_a {
+			width: 300px;
+			float: right;
+		}
+		.chats_b {
+			width: 300px;
+		}
+		.chats_c {
+			width: 300px;
+		}
+		.selected {
+			border: 0px;
+			background-color: #dc3545;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		.sas {
+			border-right: 1px solid black;
+			background-color: #dc3545;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		.select {
+			float: right;
+		}
+		#customResponseButton {
+			--breakpoint-xxl: 1600px;
+			--home-primary: #002e5d;
+			--home-secondary: #0062b8;
+			--home-primary-focus: rgba(0,46,93,0.25098039215686274);
+			--byu-headline-font: HCo Ringside Narrow SSm;
+			--byu-body-font: Public Sans;
+			--background-gray: #fafafa;
+			--blue: #007bff;
+			--indigo: #6610f2;
+			--purple: #6f42c1;
+			--pink: #e83e8c;
+			--red: #dc3545;
+			--orange: #fd7e14;
+			--yellow: #ffc107;
+			--green: #28a745;
+			--teal: #20c997;
+			--cyan: #17a2b8;
+			--white: #fff;
+			--gray: #6c757d;
+			--gray-dark: #343a40;
+			--primary: #007bff;
+			--secondary: #6c757d;
+			--success: #28a745;
+			--info: #17a2b8;
+			--warning: #ffc107;
+			--danger: #dc3545;
+			--light: #f8f9fa;
+			--dark: #343a40;
+			--breakpoint-xs: 0;
+			--breakpoint-sm: 576px;
+			--breakpoint-md: 768px;
+			--breakpoint-lg: 992px;
+			--breakpoint-xl: 1200px;
+			--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+			--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+			--md-theme-default-primary: #448aff;
+			--md-theme-default-accent: #ff5252;
+			--md-theme-default-theme: light;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-text-size-adjust: 100%;
+			-webkit-font-smoothing: antialiased;
+			box-sizing: inherit;
+			font: inherit;
+			margin: 0;
+			overflow: visible;
+			text-transform: none;
+			transition: .15s ease-in-out!important;
+			background-color: #002e5d!important;
+			color: #fff!important;
+			border-color: #002e5d!important;
+			-webkit-appearance: button;
+			display: inline-block;
+			font-weight: 400;
+			text-align: center;
+			vertical-align: middle;
+			user-select: none;
+			border: 1px solid transparent;
+			padding: .375rem .75rem;
+			font-size: 1rem;
+			line-height: 1.5;
+			border-radius: .25rem;
+			cursor: pointer;
+		}
+		#customResponseInput {
+			--breakpoint-xxl: 1600px;
+			--home-primary: #002e5d;
+			--home-secondary: #0062b8;
+			--home-primary-focus: rgba(0,46,93,0.25098039215686274);
+			--byu-headline-font: HCo Ringside Narrow SSm;
+			--byu-body-font: Public Sans;
+			--background-gray: #fafafa;
+			--blue: #007bff;
+			--indigo: #6610f2;
+			--purple: #6f42c1;
+			--pink: #e83e8c;
+			--red: #dc3545;
+			--orange: #fd7e14;
+			--yellow: #ffc107;
+			--green: #28a745;
+			--teal: #20c997;
+			--cyan: #17a2b8;
+			--white: #fff;
+			--gray: #6c757d;
+			--gray-dark: #343a40;
+			--primary: #007bff;
+			--secondary: #6c757d;
+			--success: #28a745;
+			--info: #17a2b8;
+			--warning: #ffc107;
+			--danger: #dc3545;
+			--light: #f8f9fa;
+			--dark: #343a40;
+			--breakpoint-xs: 0;
+			--breakpoint-sm: 576px;
+			--breakpoint-md: 768px;
+			--breakpoint-lg: 992px;
+			--breakpoint-xl: 1200px;
+			--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+			--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+			--md-theme-default-primary: #448aff;
+			--md-theme-default-accent: #ff5252;
+			--md-theme-default-theme: light;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-text-size-adjust: 100%;
+			-webkit-font-smoothing: antialiased;
+			pointer-events: auto;
+			word-wrap: break-word;
+			box-sizing: inherit;
+			overflow: visible;
+			font: inherit;
+			margin: 0;
+			display: block;
+			width: 290px;
+			height: calc(1.5em + .75rem + 2px);
+			padding: .375rem .75rem;
+			font-size: 1rem;
+			font-weight: 400;
+			line-height: 1.5;
+			color: #495057;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+		}
+	</style>
+	<script src="https://unpkg.com/vue@3.0.11/dist/vue.global.js"></script>
+</head>
+
+<body>
+<div id="app">
+    <div id="pageTitle">CUS - Chatbot Update System <span id="version" @click="copyDispResults()" @dblclick="deleteDispResults()">{{ prototypeVersion }}</span></div>
+    <br />
+    <b-modal id="waitModal" size="sm" centered hide-header hide-footer>
+      <div class="centered">{{ modalText }}</div>
+    </b-modal>
+  <div id="selectDay">
+    <label for="agents">Day/Agent:</label> <select id="agents" v-model="selectedContext" @change="selectContext()">
+      <option v-for="option in contexts" v-bind:value="option.dayInfo">
+        {{ option.dayInfo }}
+      </option>
+    </select>
+  </div>
+  <div v-if="systemMessage != ''" id="systemMessage"><br />{{ systemMessage }}</div>
+  <div class="help">?</div>
+  <button v-if="1===2" id="getData" @keypress.prevent="" @click.prevent="getContexts()">get data</button>
+  <br class="clear" />
+  <div v-if="selectedContextText != '' && onesToCorrectExist" id="context">
+     <span>
+       <span :class="{
+         bold_a: prototypeVersion === 'a',
+         bold_b: prototypeVersion === 'b',
+         bold_c: prototypeVersion === 'c',
+       }">Chatbot welcome message:</span> {{ selectedContextText }}<br /><br />
+     </span>
+  </div>
+  <br />
+  <div v-if="selectedContext !== 0 && onesToCorrectExist" :class="{
+      reports_a: prototypeVersion === 'a',
+      reports_b: prototypeVersion === 'b',
+      reports_c: prototypeVersion === 'c',
+      left: true,
+      red: true,
+    }">
+    <div class="left inappropriateNum"><span :class="{
+      big_numbers_a: prototypeVersion === 'a',
+      big_numbers_b: prototypeVersion === 'b',
+      big_numbers_c: prototypeVersion === 'c',
+    }">{{ inappropriateNumber }}</span></div>
+    <div class="left inappropriateDesc">inappropriate responses left</div>
+  </div>
+  <div v-if="selectedContext !== 0 && onesToCorrectExist" :class="{
+      reports_a: prototypeVersion === 'a',
+      reports_b: prototypeVersion === 'b',
+      reports_c: prototypeVersion === 'c',
+      left: true,
+      green: true,
+    }">
+    <div class="left correctedNum"><span :class="{
+      big_numbers_a: prototypeVersion === 'a',
+      big_numbers_b: prototypeVersion === 'b',
+      big_numbers_c: prototypeVersion === 'c',
+    }">{{ correctedNum }}</span><br />corrected responses<br /></div>
+    <div class="left correctedDesc">
+      {{ correctedToday}} today<br />
+      {{ correctedWeek }} this week<br />
+      {{ correctedMonth }} this month<br />
+    </div>
+  </div>
+  <br class="clear" />
+  <hr v-if="selectedContext !== 0 && onesToCorrectExist" />
+  <br class="clear" />
+  <div v-if="selectedContext !== 0 && onesToCorrectExist" id="workareas">
+    <div :class="{
+      workarea1_a: prototypeVersion === 'a',
+      workarea1_b: prototypeVersion === 'b',
+      workarea1_c: prototypeVersion === 'c',
+    }" ref="workarea11">
+      <div :class="{
+        done_a: prototypeVersion === 'a',
+        done_b: prototypeVersion === 'b',
+        done_c: prototypeVersion === 'c',
+        centered: true
+      }">{{ doneMessage }}<br /><br /></div>
+      <div :class="{
+        student_a: prototypeVersion === 'a',
+        student_b: prototypeVersion === 'b',
+        student_c: prototypeVersion === 'c',
+      }" v-for="(studentChat, index) in studentDisp">
+         <span>
+           <span :class="{
+             bold_a: prototypeVersion === 'a',
+             bold_b: prototypeVersion === 'b',
+             bold_c: prototypeVersion === 'c',
+           }">Student:</span> {{ studentChat }} 
+         </span>
+      </div>
+      <br class="clear" />
+      <div :class="{
+        chats_a: prototypeVersion === 'a',
+        chats_b: prototypeVersion === 'b',
+        chats_c: prototypeVersion === 'c',
+      }" v-for="(toCorrect, index) in pendingOnesToCorrect" v-if="onesToCorrectExist">
+        <span :class="{
+          clickable_a: prototypeVersion === 'a',
+          clickable_b: prototypeVersion === 'b',
+          clickable_c: prototypeVersion === 'c',
+        }" :key="toCorrect.id">
+        <div :class="{
+          sas_a: prototypeVersion === 'a',
+          sas_b: prototypeVersion === 'b',
+          sas_c: prototypeVersion === 'c',
+        }"><span :class="{
+         bold_a: prototypeVersion === 'a',
+         bold_b: prototypeVersion === 'b',
+         bold_c: prototypeVersion === 'c',
+       }">Chatbot:</span> {{ toCorrect.chat }}<br /><br /></div>
+        </span>
+      </div>
+    </div>
+    <div :class="{
+      workarea2_a: prototypeVersion === 'a',
+      workarea2_b: prototypeVersion === 'b',
+      workarea2_c: prototypeVersion === 'c',
+    }" >
+      <div :class="{
+        select_a: prototypeVersion === 'a',
+        select_b: prototypeVersion === 'b',
+        select_c: prototypeVersion === 'c',
+      }"><div :class="{
+        selectCorrect_a: prototypeVersion === 'a',
+        selectCorrect_b: prototypeVersion === 'b',
+        selectCorrect_c: prototypeVersion === 'c',
+      }">select correct response<br /><br /></div>
+        <fieldset v-if="prototypeVersion === 'b' && correctPossibilitiesExist" label="Select correct response" >
+          <input v-for="(possibility, index) in correctPossibilities" @change="selectCorrection(index)" :checked={radiosSelected} type="radio" name="some-radios" value="" :key="index" />
+            <span :class="{
+              bold_a: prototypeVersion === 'a',
+              bold_b: prototypeVersion === 'b',
+              bold_c: prototypeVersion === 'c',
+            }">Chatbot:</span> {{ possibility.text }}
+        </fieldset>
+        <ul v-if="prototypeVersion === 'a' || prototypeVersion === 'c'">
+          <li :class="{
+            clickable_a: true && prototypeVersion === 'a',
+            clickable_b: true && prototypeVersion === 'a',
+            clickable_c: true && prototypeVersion === 'a',
+            boxed_a: true && prototypeVersion === 'a',
+            boxed_b: true && prototypeVersion === 'b',
+            boxed_c: true && prototypeVersion === 'c',
+            reg_a: !possibility.selected && prototypeVersion === 'a',
+            reg_b: !possibility.selected && prototypeVersion === 'b',
+            reg_c: !possibility.selected && prototypeVersion === 'c',
+            sel: possibility.selected
+          }" v-for="(possibility, index) in correctPossibilities" @click.prevent="selectCorrection(index)" v-if="correctPossibilitiesExist">
+            <span class="spaced">Chatbot: {{ possibility.text }}</span>
+          </li>
+        </ul>
+        <label class="left rightPadded" for="customResponseInput">Set new alternative response: </label><input v-if="correctPossibilitiesExist" id="customResponseInput" class="left" type="text" @focus="setCustomResponseFocus(true)" @blur="setCustomResponseFocus(false)" v-model="customResponse" />
+        <br />
+        <button id="customResponseButton" @keypress.prevent="" @click.prevent="correctTheChat()" v-if="correctPossibilitiesExist" >save and continue</button>
+      </div>
+    </div>
+  </div>
+  <hr v-if="selectedContext !== 0 && onesToCorrectExist" />
+  <div v-if="selectedContext !== 0" id="correctionMessage">{{ correctionMessage }}</div>
+  <br />
+  <br />
+  <br />
+  <br class="clear"  />
+  <br />
+  <br />
+  <input v-if="showDispResults" id="dispResult" type="text" v-model="dispResults" />
+<span>If you have any questions or if there is an error, please email Steve at <a href="mailto:stephen.francis@byu.edu">stephen.francis@byu.edu</a></span>
+<div id="bvmodal"></div>
+</div>
+
+<script>
+const app = Vue.createApp({
+//import prototypeVersionData from "@/prototype.json";
+
+  layout: 'basepcs', // ONLY INCLUDE IF THE MODULE WILL BE THE MAIN CONTENT OF ITS PAGE
+
+  metaInfo () {
+    return { title: this.$t('chatbot update system (CUS)') }
+  },
+
+  created() {
+    window.addEventListener('keypress', this.onKeyPress);
+
+    this.getContexts();
+    this.getPrototypeVersion();
+
+    const secondsSinceEpoch = Math.round(Date.now() / 1000);
+    const now = new Date().toLocaleString([], {hour12: false});
+    const key =  'p15' + this.prototypeVersion + '-begin-' + now;
+    localStorage.setItem(key, secondsSinceEpoch);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('keypress', this.onKeyPress);
+  },
+
+  props: ['pcs', 'version'],
+
+  data() {
+    return {
+      allTheOnesToCorrect: [],
+      chatbotName: '',
+      contexts: [],
+      correctPossibilities: [],
+      correctPossibilitiesExist: false,
+      correctedMonth: 0,
+      correctedNum: 0,
+      correctedToday: 0,
+      correctedWeek: 0,
+      correctionMessage: '',
+      correctionPair: {},
+      customResponse: '',
+      customResponseFocused: false,
+      devices: [],
+      dispResults: '',
+      doneMessage: 'pending response',
+      inappropriateNum: 0,
+      modalText: 'please wait...',
+      onesToCorrect: [],
+      onesToCorrectExist: false,
+      pendingOnesToCorrect: [],
+      prototypeVersion: 'b',
+      radiosSelected: false,
+      selectedContext: 0,
+      selectedContextId: '',
+      selectedContextText: '',
+      selectedCorrection: 0,
+      selectedDialogflowName: '',
+      selectedId: 0,
+      selectedToCorrectText: '',
+      showDispResults: false,
+      studentDisp: [],
+      systemMessage: '',
+      title: 'appname'
+    }
+  },
+
+  methods: {
+    getPrototypeVersion() {
+          this.prototypeVersion = 'a';
+    },
+    getContexts() {
+          let dataRaw = '{"contexts":[{"id":"cybermatics-day1","dayInfo":"Cybermatics DAY 1"},{"id":"cybermatics-day2","dayInfo":"Cybermatics DAY 2"},{"id":"cybermatics-day3","dayInfo":"Cybermatics DAY 3"},{"id":"cybermatics-day4","dayInfo":"Cybermatics DAY 4"},{"id":"sam-day-4","dayInfo":"Sam DAY 4"},{"id":"cybermatics-day5","dayInfo":"Cybermatics DAY 5"}]}';
+          let data = JSON.parse(dataRaw);
+          this.contexts = data.contexts;
+    },
+    copyDispResults() {
+      this.showDispResults = !this.showDispResults;
+    },
+    deleteDispResults() {
+      if (confirm("Are you sure you want to delete the test results?") === true) {
+        for (const key in localStorage) {
+          if (key.search('-begin-') > -1 || key.search('-end-') > -1) {
+            localStorage.removeItem(key);
+          }
+        }
+        console.log('disp results deleted!');
+      }
+    },
+    getTheData(id) {
+console.log(id);
+          let response = {}; //TODO put in real data
+          let dataRaw = '';
+          switch (id) {
+            case "cybermatics-day1":
+              dataRaw = '{"success":true,"dialogflowData":{"dialogFlowIntents":[{"name":"projects\/cybermatics-day1\/agent\/intents\/4171be90-0978-4bae-81fc-4ffc7446d5d9","displayName":"Finished"},{"name":"projects\/cybermatics-day1\/agent\/intents\/60880495-be53-4382-ba0b-5a634e03ec79","displayName":"Pentest"},{"name":"projects\/cybermatics-day1\/agent\/intents\/8ca07699-da1a-47df-a441-50f8d9be2d94","displayName":"Default Welcome Intent - custom"},{"name":"projects\/cybermatics-day1\/agent\/intents\/c42b8c6f-6e63-458f-bfc7-e68a27d51670","displayName":"Default Fallback Intent"},{"name":"projects\/cybermatics-day1\/agent\/intents\/eef709af-1b27-429f-9d9f-84ac86cac447","displayName":"Default Welcome Intent"}],"msgData":{"payload":{"msgs":[{"name":"Kimberly Smitherton","time":"now","msg":"Hey there {{{auth.user.name}}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","first":1,"type":1}]}}},"prototypeVersion":"b","correctedNum":0,"correctedToday":0,"correctedWeek":0,"correctedMonth":0,"onesToCorrect":{"cybermatics-day1":[{"id":1,"selected":false,"student":"I\'m new here and saying hi to the team.","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"I didn\'t get that. Can you repeat?"},{"id":2,"selected":false,"student":"asdada","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"},{"id":7,"selected":false,"student":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","chat":"Sorry, could you say that again?"},{"id":3,"selected":false,"student":"whats todays date","chat":"I didn\'t get that. Can you say it again?"},{"id":4,"selected":false,"student":"what is the date todat","chat":"I missed that, say that again?"},{"id":5,"selected":false,"student":"ai","chat":"Sorry, can you say that again?"},{"id":6,"selected":false,"student":"#","chat":"I missed what you said. What was that?"}]},"correctPossibilities":{"cybermatics-day1":[{"id":1,"selected":false,"intentName":"Finished","text":"Perfect. Sounds like you\'re up to speed. We\'ll see you tomorrow for the real work. Again, happy to have you aboard. ","chatbotName":"Kimberly Smitherton","dialogflowName":"projects\/cybermatics-day1\/agent\/intents\/4171be90-0978-4bae-81fc-4ffc7446d5d9"},{"id":2,"selected":false,"intentName":"Pentest","text":"Just as a refresher, the purpose of a pentest is to help a company learn more about it\'s own vulnerabilities. When companies build websites, they often cannot predict how these sites will be attacked by hackers or other malicious entities. That\'s where we come in. We find the weaknesses and holes in their security. Riptech has asked us to find flaws in their system before the impending launch of their new app. That\'s it, just make sure you are familiar with the scope document before we begin. Let me know when you\'ve read it!","chatbotName":"Kimberly Smitherton","dialogflowName":"projects\/cybermatics-day1\/agent\/intents\/60880495-be53-4382-ba0b-5a634e03ec79"},{"id":3,"selected":false,"intentName":"Default Welcome Intent - custom","text":"Yo, glad you could join us. We\'re gonna rock this. ","chatbotName":"Samuel McCarthy","dialogflowName":"projects\/cybermatics-day1\/agent\/intents\/8ca07699-da1a-47df-a441-50f8d9be2d94"}]},"contexts":[{"id":"cybermatics-day1","dayInfo":"Cybermatics DAY 1","text":["Kimberly Smitherton: Hey there {{{auth.user.name}}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!"]},{"id":"cybermatics-day2","dayInfo":"Cybermatics DAY 2"},{"id":"cybermatics-day3","dayInfo":"Cybermatics DAY 3"},{"id":"cybermatics-day4","dayInfo":"Cybermatics DAY 4"},{"id":"sam-day-4","dayInfo":"Sam DAY 4"},{"id":"cybermatics-day5","dayInfo":"Cybermatics DAY 5"}],"chatsFromDb":[],"conversations":[{"id":0,"name":"Kimberly Smitherton","online":true,"unread":0,"messages":[],"chatbot":true,"role":"CISO"},{"id":1,"name":"Ian Montgomery","online":true,"unread":0,"messages":[],"chatbot":true,"role":"Lead Technical Specialist"},{"id":2,"name":"Samuel McCarthy","online":true,"unread":0,"messages":[],"chatbot":true,"role":"Lead Social Engineer"},{"id":3,"name":"Jennifer Franco","online":true,"unread":0,"messages":[],"chatbot":true,"role":"Director of Human Resources"},{"id":"-2","name":"Team","unread":0,"chatbot":true,"members":["Kimberly Smitherton","Ian Montgomery","Samuel McCarthy"],"defaultSender":"Kimberly Smitherton","messages":[{"senderName":"Kimberly Smitherton","message":"Hey there {{auth.user.name}}, welcome to Cybermatics! I sent you a welcome email with some important details, so please read through that if you haven\u2019t already. Look through the tasks listed on the left side of the screen to get an idea of what you\u2019ll be doing today. We\u2019re excited to have you on the team! Shoot us a hello when you get on!","senderId":"-2","timestamp":"2024-11-11T21:28:45.362Z","videoUrl":null,"captionsPath":null},{"senderName":"Jayden Paxton","message":"Hey","senderId":2723,"timestamp":"2024-11-11T21:36:59.813Z","videoUrl":null},{"senderName":"Samuel McCarthy","message":"Yo, glad you could join us. We\'re gonna rock this.","senderId":"-2","timestamp":"2024-11-11T21:37:02.289Z","videoUrl":null,"captionsPath":null},{"senderName":"Ian Montgomery","message":"Welcome! This is a great crew and I think you\'ll like it.","senderId":"-2","timestamp":"2024-11-11T21:37:04.019Z","videoUrl":null,"captionsPath":null},{"senderName":"Kimberly Smitherton","message":"We\'re glad you\'ve joined the team! I\'m sure you\'ll be a great addition. I filmed a short intro video this morning to go over some of the job basics and introduce the team. I know working remotely can be hard, so hopefully this helps put a face to the name. This should give you some of the information you\'ll need to best collaborate with all of us.","senderId":"-2","timestamp":"2024-11-11T21:37:09.952Z","videoUrl":"\/storage\/media\/pcs\/cybermatics\/videos\/cybermatics-day-1.mp4","captionsPath":"\/storage\/media\/pcs\/cybermatics\/videos\/captions\/cybermatics-day-1.vtt"},{"senderName":"Kimberly Smitherton","message":"We also recorded the conference call we had with our client this morning. Once you watch this you should be up to speed.","senderId":"-2","timestamp":"2024-11-11T21:37:12.849Z","videoUrl":"\/storage\/media\/pcs\/cybermatics\/videos\/cybermatics-day-2.mp4","captionsPath":"\/storage\/media\/pcs\/cybermatics\/videos\/captions\/cybermatics-day-2.vtt"},{"senderName":"Kimberly Smitherton","message":"We\'re going to start with a pentest. Do you remember what that is?","senderId":"-2","timestamp":"2024-11-11T21:37:14.553Z","videoUrl":null,"captionsPath":null},{"senderName":"Kimberly Smitherton","message":"Good morning! You should be familiar now with the scope document\u2014remember that it is absolutely imperative that we stay within scope in all of our penetration test activities. Now you should be ready to get going with the pen test! To begin, why don\u2019t you see if you can use SQL injection to get into the RipTech database? Ian, you said you found a login page on RipTech\u2019s site, right?","senderId":"-2","timestamp":"2024-11-11T21:44:56.940Z","videoUrl":null,"captionsPath":null},{"senderName":"Ian Montgomery","message":"Yep! Go to <a href=\'http:\/\/riptech.xyz\'> riptech.xyz<\/a>\u2014 there\u2019s a login page there, you\u2019ll see it. People really should sanitize their inputs on those sorts of login pages so they\u2019re not vulnerable to SQL, but I didn\u2019t check to see if they did. You can try SQL injection there and see if it works.","senderId":"-2","timestamp":"2024-11-11T21:44:56.941Z","videoUrl":null,"captionsPath":null},{"senderName":"Kimberly Smitherton","message":"Perfect. Refer to the documentation if you need any help with SQL injection. To start out, just see if you can get in and retrieve the database name. If that works, reply with the database name so we can all poke around a bit.","senderId":"-2","timestamp":"2024-11-11T21:44:56.941Z","videoUrl":null,"captionsPath":null}],"credentials":"\/storage\/app\/public\/media\/pcs\/cybermatics\/chatbot\/cybermatics-day2.json","agent_id":"cybermatics-day2"}]}';
+              break;
+            case "cybermatics-day2":
+              dataRaw = '';
+              break;
+            case "cybermatics-day3":
+              dataRaw = '';
+              break;
+            case "cybermatics-day4":
+              dataRaw = '';
+              break;
+            case "sam-day-4":
+              dataRaw = '';
+              break;
+            case "cybermatics-day5":
+              dataRaw = '';
+              break;
+            default:
+              dataRaw = '';
+
+          }
+
+	  response.data = JSON.parse(dataRaw);
+          if (response.data && response.data.success) {
+            let data = response.data;
+            this.allTheOnesToCorrect = data.onesToCorrect;
+console.log(data.correctPossibilities);
+            this.allTheCorrectPossibilities = data.correctPossibilities;
+            this.correctedMonth = data.correctedMonth;
+            this.correctedNum = data.correctedNum;
+            this.correctedToday = data.correctedToday;
+            this.correctedWeek = data.correctedWeek;
+            this.contexts = data.contexts;
+
+            for (var x in this.contexts) {
+            if (this.contexts[x].text !== undefined && this.contexts[x].text.length > 0) {
+                this.selectedContextText = this.contexts[x].text[0];
+              }
+            }
+            this.onesToCorrectExist = false;
+            this.studentDisp = [];
+            for (var x in this.allTheOnesToCorrect) {
+              if (id === x) {
+                this.onesToCorrect = this.allTheOnesToCorrect[x];
+                if (this.onesToCorrect.length > 0) this.onesToCorrectExist = true;
+                this.setPendingOnesToCorrect(this.onesToCorrect[0]);
+                this.setStudentResponse(this.onesToCorrect[0].student);
+                this.setIdToCorrect(0);
+                break;
+              }
+            }
+
+            this.dispResults = '';
+
+            if (this.onesToCorrectExist) {
+              this.systemMessage = '';
+            } else {
+              this.systemMessage = 'There are no chats to correct for this day/agent.';
+            }
+
+            this.correctPossibilitiesExist = false;
+            for (var x in this.allTheCorrectPossibilities) {
+              if (id === x) {
+                this.correctPossibilities = this.allTheCorrectPossibilities[x];
+                if (this.correctPossibilities.length > 0) this.correctPossibilitiesExist = true;
+                break;
+              }
+            }
+            this.setChatbotName(0);
+//            this.$bvModal.hide('waitModal');
+          } else {
+            this.modalText = 'there was an error. please try again later.';
+            setTimeout(function(scope) {
+//              scope.$bvModal.hide('waitModal');
+              scope.modalText = 'please wait...';
+            }, 2000, this);
+          }
+    },
+    selectCorrection(index) {
+      this.selectedCorrection = 0;
+      var shouldSelect = false;
+      if (!this.correctPossibilities[index].selected) {
+        shouldSelect = true;
+      }
+      for (var x in this.correctPossibilities) {
+        this.correctPossibilities[x].selected = false;
+      }
+      if (shouldSelect) {
+        this.correctPossibilities[index].selected = true;
+        this.selectedCorrection = this.correctPossibilities[index].id;
+        this.selectedDialogflowName = this.correctPossibilities[index].dialogflowName;
+      }
+    },
+    afterCorrectTheChat() {
+        var theCorrection = this.selectedCorrection;
+        this.correctionMessage = '';
+        this.onesToCorrect[x]
+        var newOnesToCorrect = [];
+        for (var x in this.onesToCorrect) {
+          if (this.onesToCorrect[x].id !== this.selectedId) {
+            newOnesToCorrect.push(this.onesToCorrect[x]);
+          }
+        }
+        var highestId = 0;
+        var allPossibilities = [];
+        for (var x in this.correctPossibilities) {
+          this.correctPossibilities[x].selected = false;
+          allPossibilities.push(this.correctPossibilities[x]);
+          highestId = this.correctPossibilities[x].id;
+        }
+        this.selectedCorrection = 0;
+        this.selectedId = 0;
+        if (this.customResponse !== '') {
+          var newResponse = {};
+          newResponse.selected = false;
+          newResponse.id = highestId + 1;
+          newResponse.text = this.customResponse;
+          allPossibilities.push(newResponse);
+        }
+
+        this.modalText = 'corrected!';
+        setTimeout(function(scope) {
+//          scope.$bvModal.hide('waitModal');
+          scope.modalText = 'please wait...';
+        }, 2000, this);
+
+        this.onesToCorrect = newOnesToCorrect;
+        if (this.onesToCorrect[0] !== undefined) {
+          this.setPendingOnesToCorrect(this.onesToCorrect[0]);
+          this.setStudentResponse(this.onesToCorrect[0].student);
+          this.setIdToCorrect(0);
+        } else {
+          this.pendingOnesToCorrect = [];
+          this.onesToCorrectExist = false;
+
+          const secondsSinceEpoch = Math.round(Date.now() / 1000);
+          const now = new Date().toLocaleString([], {hour12: false});
+          const key =  'p15' + '-end-' + now;
+          localStorage.setItem(key, secondsSinceEpoch);
+          this.dispResults = '[';
+          for (const key in localStorage) {
+            if (key.search('-begin-') > -1 || key.search('-end-') > -1) {
+              this.dispResults = this.dispResults + '{"' + key + '":' + localStorage.getItem(key) + '},';
+            }
+          }
+          this.dispResults = this.dispResults + ']';
+          this.systemMessage = 'There are no more chats to correct for this day/agent.';
+        }
+        this.correctPossibilities = allPossibilities;
+        this.inappropriateNum--;
+        this.correctedNum++;
+        this.correctedToday++;
+        this.correctedWeek++;
+        this.correctedMonth++;
+        this.correctionPair.toCorrect = this.selectedId;
+        this.correctionPair.selectedCorrection = this.customResponse !== '' ? this.customResponse : theCorrection;
+        this.customResponse = '';
+        this.radiosSelected = false;
+    },
+    correctTheChat() {
+      if (this.selectedId > 0 && (this.customResponse !== '' || this.selectedCorrection > 0)) {
+        this.modalText = 'correcting...';
+//        this.$bvModal.show('waitModal')
+        let response = {}; //TODO put in real data
+        if (this.customResponse !== '') {
+            if (response.data && response.data.success) {
+              //this.pcs = response.data
+              this.getTheData(this.selectedContextId);
+              this.afterCorrectTheChat();
+            } else {
+              this.modalText = 'there was an error. please try again later.';
+              setTimeout(function(scope) {
+//                scope.$bvModal.hide('waitModal');
+                scope.modalText = 'please wait...';
+              }, 2000, this);
+            }
+        } else {
+            if (response.data && response.data.success) {
+              //this.pcs = response.data
+              this.afterCorrectTheChat();
+            } else {
+              this.modalText = 'there was an error. please try again later.';
+              setTimeout(function(scope) {
+//                scope.$bvModal.hide('waitModal');
+                scope.modalText = 'please wait...';
+              }, 2000, this);
+            }
+        }
+      }
+    },
+    onKeyPress(event) {
+      if (event.key == 'Enter') {
+        this.correctTheChat();
+      } else if (this.customResponseFocused) {
+        return;
+      } else {
+        let okKeysOnesToCorrect = ['1','2','3','4','5'];
+        if (okKeysOnesToCorrect.includes(event.key)) {
+          var doSelect = parseInt(event.key) - 1;
+          this.selectChat(doSelect);
+        }
+        var allTheLetters = 'abcdefghijklmnopqrstuvwxyz';
+        var okKeysPossibleCorrections = allTheLetters.split('');
+        if (okKeysPossibleCorrections.includes(event.key)) {
+          var mappedLettersToIndex = {};
+          for (var x in this.correctPossibilities) {
+            mappedLettersToIndex[okKeysPossibleCorrections[x]] = x;
+          }
+          if (mappedLettersToIndex[event.key] !== undefined) {
+            this.selectCorrection(mappedLettersToIndex[event.key]);
+          }
+        }
+      }
+    },
+    setPendingOnesToCorrect(theOne) {
+      this.pendingOnesToCorrect = [];
+      this.pendingOnesToCorrect.push(theOne);
+    },
+    setStudentResponse(student) {
+      this.studentDisp = [];
+      this.studentDisp.push(student);
+    },
+    setIdToCorrect(index) {
+      this.selectedId = this.onesToCorrect[index].id;
+      this.selectedToCorrectText = this.onesToCorrect[index].student;
+    },
+    setChatbotName(index) {
+      this.chatbotName = this.correctPossibilities[index].chatbotName;
+    },
+    getOnesToCorrectElement(id) {
+      for (var x in this.onesToCorrect) {
+        if (x == id) {
+          return this.onesToCorrect[x];
+        }
+      }
+    },
+    getStudentElement(id) {
+      for (var x in this.onesToCorrect) {
+        if (x == id) {
+          return this.onesToCorrect[x].student;
+        }
+      }
+    },
+    validateOnesToCorrectId(id) {
+      if (id < 0) {
+        return false;
+      }
+      if (id >= this.onesToCorrect.length) {
+        return false;
+      }
+      return true;
+    },
+    loadOneToCorrect(id) {
+      if (this.validateOnesToCorrectId(id)) {
+        let theOne = this.getOnesToCorrectElement(id);
+        this.setPendingOnesToCorrect(theOne);
+        let student = this.getStudentElement(id);
+        this.setStudentResponse(student);
+        this.setIdToCorrect(id);
+        this.selectedId = id;
+      }
+    },
+    saveCustomResponse() {
+      this.customResponse = event.target.value;
+    },
+    setCustomResponseFocus(focused) {
+      this.customResponseFocused = focused;
+    },
+    selectContext() {
+//      this.$bvModal.show('waitModal')
+      for (var x in this.contexts) {
+        if (this.selectedContext === this.contexts[x].dayInfo) {
+          this.selectedContextId = this.contexts[x].id;
+          this.getTheData(this.selectedContextId);
+          break;
+        }
+      }
+    },
+  },
+
+  computed: {
+    inappropriateNumber() {
+      return this.onesToCorrect.length;
+    },
+  }
+
+})
+</script>
+
+
+<script>
+//a = one column of correct responses below, b = two columns, c = popup
+	const mountedApp = app.mount('#app')
+</script>
+
+<style scoped lang="scss">
+#navContainer {
+  display: none;
+  width: 200px;
+}
+#prev {
+  width: 100px;
+  float: left;
+}
+#next {
+  width: 100px;
+  float: right;
+}
+#version {
+  color: gray;
+  font-size: 10px;
+  cursor: pointer;
+}
+#pageTitle {
+  font-size: 30px;
+  padding-top: 20px;
+}
+.rightPadded {
+  padding-right: 10px;
+}
+div {
+  /*border: 1px solid black;*/
+}
+#workareas {
+  width: 600px;
+}
+#context {
+  width: 490px;
+}
+.left {
+  float: left;
+}
+.clickable_a {
+  margin: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+}
+.clickable_b {
+
+}
+.clickable_c {
+  cursor: pointer;
+  margin: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+}
+.reg_a {
+  background-color: #3cb371;
+}
+.reg_a:hover {
+  filter: brightness(120%);
+}
+.sel {
+  background-color: #3cb371;
+  filter: brightness(130%);
+}
+.reg_b {
+
+}
+.reg_c {
+  background-color: #28a745;
+}
+.done_a {
+  display: none;
+}
+.done_b {
+  display: none;
+}
+.done_c {
+  width: 400px;
+  background-color: #000000;
+  color: white;
+}
+.student_a {
+  border: 1px solid black;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  float: left;
+}
+.student_b {
+
+}
+.student_c {
+  border: 1px solid black;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  float: left;
+}
+.selectCorrect_a {
+  display: none;
+}
+.selectCorrect_b {
+  display: none;
+}
+.selectCorrect_c {
+  background-color: #000000;
+  color: white;
+  text-align: center;
+}
+.centered {
+  text-align: center;
+}
+.boxed_a {
+  list-style-type: none;
+  border: 1px solid black;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+  float: right;
+}
+.boxed_b {
+
+}
+.boxed_c {
+  list-style-type: none;
+  border: 1px solid black;
+  margin: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  float: left;
+  width: 29%;
+}
+.spaced {
+  margin-top: 10px;
+}
+.col-form-label {
+  font-weight: bold;
+}
+.bold_a {
+  font-weight: bold;
+}
+.bold_b {
+  font-weight: bold;
+}
+.bold_c {
+  font-weight: bold;
+}
+.reports_a {
+  padding-top: 40px;
+  margin-right: 15px;
+}
+.reports_b {
+  margin-right: 15px;
+}
+.reports_c {
+  padding-top: 40px;
+  margin-right: 15px;
+}
+.big_numbers_a {
+  font-size: 60pt;
+}
+.big_numbers_b {
+  font-size: 40pt;
+}
+.big_numbers_c {
+  font-size: 60pt;
+}
+.red {
+  color: rgb(136, 34, 85);
+}
+.green {
+  color: rgb(17, 119, 51);
+}
+.inappropriateNum {
+  width: 50%;
+  text-align: center;
+}
+.inappropriateDesc {
+  width: 40%;
+  margin-left: 10px;
+}
+.correctedNum {
+  text-align: center;
+}
+.correctedDesc {
+  margin-left: 10px;
+}
+.help {
+  display: none;
+  float: right;
+}
+.clear {
+  clear: both;
+}
+.workarea1_a {
+  min-height: 135px;
+  clear: both;
+}
+.workarea1_b {
+  clear: both;
+}
+.workarea1_c {
+  min-height: 222px;
+  clear: both;
+}
+.workarea2_a {
+  float: left;
+  padding-left: 20px;
+  background-color: #ffffff;
+  min-height: 400px;
+}
+.workarea2_b {
+  float: left;
+  background-color: #ffffff;
+}
+.workarea2_c {
+  float: left;
+  padding-left: 20px;
+  background-color: #ffffff;
+  min-height: 400px;
+}
+.chats_a {
+  width: 300px;
+  float: right;
+}
+.chats_b {
+
+}
+.chats_c {
+  width: 300px;
+}
+
+.sas_a {
+  border-right: 1px solid black;
+  background-color: #e25c5f;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.sas_b {
+
+}
+.sas_c {
+  border-right: 1px solid black;
+  background-color: #e25c5f;
+  margin: 10px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.select_a {
+  float: right;
+}
+.select_b {
+
+}
+.select_c {
+  float: right;
+}
+#customResponseButton {
+  --breakpoint-xxl: 1600px;
+  --home-primary: #002e5d;
+  --home-secondary: #0062b8;
+  --home-primary-focus: rgba(0,46,93,0.25098039215686274);
+  --byu-headline-font: HCo Ringside Narrow SSm;
+  --byu-body-font: Public Sans;
+  --background-gray: #fafafa;
+  --blue: #007bff;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+  --white: #fff;
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  --md-theme-default-primary: #448aff;
+  --md-theme-default-accent: #ff5252;
+  --md-theme-default-theme: light;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  box-sizing: inherit;
+  font: inherit;
+  margin: 0;
+  overflow: visible;
+  text-transform: none;
+  transition: .15s ease-in-out!important;
+  background-color: #002e5d!important;
+  color: #fff!important;
+  border-color: #002e5d!important;
+  -webkit-appearance: button;
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  border: 1px solid transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+  cursor: pointer;
+}
+#customResponseInput {
+  --breakpoint-xxl: 1600px;
+  --home-primary: #002e5d;
+  --home-secondary: #0062b8;
+  --home-primary-focus: rgba(0,46,93,0.25098039215686274);
+  --byu-headline-font: HCo Ringside Narrow SSm;
+  --byu-body-font: Public Sans;
+  --background-gray: #fafafa;
+  --blue: #007bff;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+  --white: #fff;
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #007bff;
+  --secondary: #6c757d;
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  --breakpoint-xs: 0;
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+  --font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+  --font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+  --md-theme-default-primary: #448aff;
+  --md-theme-default-accent: #ff5252;
+  --md-theme-default-theme: light;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  pointer-events: auto;
+  word-wrap: break-word;
+  box-sizing: inherit;
+  overflow: visible;
+  font: inherit;
+  margin: 0;
+  display: block;
+  width: 290px;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+</style>
