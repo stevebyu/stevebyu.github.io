@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+	<title>cus - chatbot update system</title>
+	<!--<link rel="stylesheet" href="./styles.css" />-->
+	<style>
+		#version {
+			color: gray;
+			font-size: 15px;
+		}
+		#pageTitle {
+			font-size: 30px;
+		}
+		div {
+			/*border: 1px solid black;*/
+		}
+		#context {
+			border: 1px solid black;
+			width: 490px;
+		}
+		.left {
+			float: left;
+		}
+		#workareas {
+			width: 470px;
+		}
+		.clickable_a {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.clickable_b {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.clickable_c {
+			cursor: pointer;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.reg_a {
+			background-color: #28a745;
+		}
+		.reg_b {
+			background-color: #28a745;
+		}
+		.reg_c {
+			background-color: #28a745;
+		}
+		.done_a {
+			display: none;
+		}
+		.done_b {
+			width: 400px;
+			background-color: #000000;
+			color: white;
+		}
+		.done_c {
+			width: 400px;
+			background-color: #000000;
+			color: white;
+		}
+		.student_a {
+			border: 1px solid black;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			float: left;
+		}
+		.student_b {
+
+		}
+		.student_c {
+
+		}
+		.selectCorrect_a {
+			display: none;
+		}
+		.selectCorrect_b {
+			background-color: #000000;
+			color: white;
+		}		
+		.selectCorrect_c {
+			background-color: #000000;
+			color: white;
+		}
+		.centered {
+			text-align: center;
+		}
+		.sel {
+			background-color: lightpink;
+		}
+		.boxed_a {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+			float: right;
+		}
+		.boxed_b {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.boxed_c {
+			list-style-type: none;
+			border: 1px solid black;
+			margin: 20px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+		}
+		.spaced {
+			margin-top: 10px;
+		}
+		.reports {
+			margin-right: 15px;
+			border: 1px solid black;
+		}
+		.big-numbers {
+			font-size: 70pt;
+		}
+		.red {
+			color: red;
+		}
+		.green {
+			color: green;
+		}
+		.inappropriateNum {
+			width: 50%;
+			text-align: center;
+		}
+		.inappropriateDesc {
+			width: 40%;
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+		.correctedNum {
+			text-align: center;
+		}
+		.correctedDesc {
+			margin-top: 30px;
+			margin-left: 10px;
+		}
+		.help {
+			float: right;
+		}
+		.clear {
+			clear: both;
+		}
+		.workarea1_a {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea1_b {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea1_c {
+			min-height: 222px;
+			clear: both;
+		}
+		.workarea2_a {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.workarea2_b {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.workarea2_c {
+			float: left;
+			padding-left: 20px;
+			background-color: #ffffff;
+			min-height: 400px;
+		}
+		.chats_a {
+			width: 300px;
+			float: right;
+		}
+		.chats_b {
+			width: 300px;
+		}
+		.chats_c {
+			width: 300px;
+		}
+		.selected {
+			border: 0px;
+			background-color: #dc3545;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		.sas {
+			border-right: 1px solid black;
+			background-color: #dc3545;
+			margin: 10px;
+			padding-top: 20px;
+			padding-bottom: 20px;
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+		.select {
+			float: right;
+		}
+		#customResponseButton {
+			--breakpoint-xxl: 1600px;
+			--home-primary: #002e5d;
+			--home-secondary: #0062b8;
+			--home-primary-focus: rgba(0,46,93,0.25098039215686274);
+			--byu-headline-font: HCo Ringside Narrow SSm;
+			--byu-body-font: Public Sans;
+			--background-gray: #fafafa;
+			--blue: #007bff;
+			--indigo: #6610f2;
+			--purple: #6f42c1;
+			--pink: #e83e8c;
+			--red: #dc3545;
+			--orange: #fd7e14;
+			--yellow: #ffc107;
+			--green: #28a745;
+			--teal: #20c997;
+			--cyan: #17a2b8;
+			--white: #fff;
+			--gray: #6c757d;
+			--gray-dark: #343a40;
+			--primary: #007bff;
+			--secondary: #6c757d;
+			--success: #28a745;
+			--info: #17a2b8;
+			--warning: #ffc107;
+			--danger: #dc3545;
+			--light: #f8f9fa;
+			--dark: #343a40;
+			--breakpoint-xs: 0;
+			--breakpoint-sm: 576px;
+			--breakpoint-md: 768px;
+			--breakpoint-lg: 992px;
+			--breakpoint-xl: 1200px;
+			--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+			--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+			--md-theme-default-primary: #448aff;
+			--md-theme-default-accent: #ff5252;
+			--md-theme-default-theme: light;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-text-size-adjust: 100%;
+			-webkit-font-smoothing: antialiased;
+			box-sizing: inherit;
+			font: inherit;
+			margin: 0;
+			overflow: visible;
+			text-transform: none;
+			transition: .15s ease-in-out!important;
+			background-color: #002e5d!important;
+			color: #fff!important;
+			border-color: #002e5d!important;
+			-webkit-appearance: button;
+			display: inline-block;
+			font-weight: 400;
+			text-align: center;
+			vertical-align: middle;
+			user-select: none;
+			border: 1px solid transparent;
+			padding: .375rem .75rem;
+			font-size: 1rem;
+			line-height: 1.5;
+			border-radius: .25rem;
+			cursor: pointer;
+		}
+		#customResponseInput {
+			--breakpoint-xxl: 1600px;
+			--home-primary: #002e5d;
+			--home-secondary: #0062b8;
+			--home-primary-focus: rgba(0,46,93,0.25098039215686274);
+			--byu-headline-font: HCo Ringside Narrow SSm;
+			--byu-body-font: Public Sans;
+			--background-gray: #fafafa;
+			--blue: #007bff;
+			--indigo: #6610f2;
+			--purple: #6f42c1;
+			--pink: #e83e8c;
+			--red: #dc3545;
+			--orange: #fd7e14;
+			--yellow: #ffc107;
+			--green: #28a745;
+			--teal: #20c997;
+			--cyan: #17a2b8;
+			--white: #fff;
+			--gray: #6c757d;
+			--gray-dark: #343a40;
+			--primary: #007bff;
+			--secondary: #6c757d;
+			--success: #28a745;
+			--info: #17a2b8;
+			--warning: #ffc107;
+			--danger: #dc3545;
+			--light: #f8f9fa;
+			--dark: #343a40;
+			--breakpoint-xs: 0;
+			--breakpoint-sm: 576px;
+			--breakpoint-md: 768px;
+			--breakpoint-lg: 992px;
+			--breakpoint-xl: 1200px;
+			--font-family-sans-serif: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+			--font-family-monospace: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+			--md-theme-default-primary: #448aff;
+			--md-theme-default-accent: #ff5252;
+			--md-theme-default-theme: light;
+			-webkit-tap-highlight-color: transparent;
+			-webkit-text-size-adjust: 100%;
+			-webkit-font-smoothing: antialiased;
+			pointer-events: auto;
+			word-wrap: break-word;
+			box-sizing: inherit;
+			overflow: visible;
+			font: inherit;
+			margin: 0;
+			display: block;
+			width: 290px;
+			height: calc(1.5em + .75rem + 2px);
+			padding: .375rem .75rem;
+			font-size: 1rem;
+			font-weight: 400;
+			line-height: 1.5;
+			color: #495057;
+			background-color: #fff;
+			background-clip: padding-box;
+			border: 1px solid #ced4da;
+			border-radius: .25rem;
+			transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+		}
+	</style>
+	<script src="https://unpkg.com/vue@3.0.11/dist/vue.global.js"></script>
+</head>
+
+<body>
+	<img src="arbitration.png" />
+</body>
