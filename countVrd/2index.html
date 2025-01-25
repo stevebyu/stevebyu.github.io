@@ -1,0 +1,62 @@
+<script>
+//beginnings - written by chat gpt
+// This version of the app is written in plain JavaScript (no JSX or React-specific syntax).
+// It uses basic DOM manipulation and event handling to achieve the same functionality.
+
+// Initialize variables to keep track of the word count
+let totalWordCount = 0;
+let previousWords = 0;
+
+// Function to handle text area input changes
+function handleTextChange(event) {
+  const text = event.target.value;
+  const words = text.trim().split(/\s+/);
+  const currentWordCount = words.filter((word) => word).length;
+
+  if (currentWordCount + previousWords > totalWordCount) {
+    totalWordCount = currentWordCount + previousWords;
+    updateWordCountDisplay();
+  } else if (currentWordCount === 0) {
+    previousWords = totalWordCount;
+  }
+}
+
+// Function to update the displayed word count
+function updateWordCountDisplay() {
+  const wordCountDisplay = document.getElementById("word-count-display");
+  wordCountDisplay.textContent = `Total Word Count: ${totalWordCount}`;
+}
+
+// Create and set up the app structure
+function createWordCountApp() {
+  const app = document.createElement("div");
+  app.className = "flex flex-col items-center min-h-screen bg-gray-100 p-4";
+
+  const title = document.createElement("h1");
+  title.className = "text-2xl font-bold mb-4";
+  title.textContent = "Count Word (|;)>";
+  app.appendChild(title);
+
+  const card = document.createElement("div");
+  card.className = "w-full max-w-md bg-white shadow rounded-lg p-4";
+
+  const textArea = document.createElement("textarea");
+  textArea.className = "w-full h-40 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
+  textArea.placeholder = "Type your text here...";
+  textArea.addEventListener("input", handleTextChange);
+  card.appendChild(textArea);
+
+  const wordCountDiv = document.createElement("div");
+  wordCountDiv.id = "word-count-display";
+  wordCountDiv.className = "mt-4 p-2 bg-blue-50 border border-blue-300 rounded-lg text-lg font-medium";
+  wordCountDiv.textContent = "Total Word Count: 0";
+  card.appendChild(wordCountDiv);
+
+  app.appendChild(card);
+  document.body.appendChild(app);
+}
+
+// Initialize the app on page load
+window.addEventListener("DOMContentLoaded", createWordCountApp);
+
+</script>

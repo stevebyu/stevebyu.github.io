@@ -1,0 +1,15 @@
+{
+    "name": "Count Vrd",
+    "short_name": "CntVrd",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "description": "A simple PWA to count words in a text area and other various and sundry functionalities for the benefit of writers.",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        }
+    ]
+}
