@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Submission</title>
+</head>
+<body>
+  <h1>Submit Research Information</h1>
+  <p>created using chaptgpt</p>
+  <form id="researchForm">
+    <label for="authors">Authors:</label><br />
+    <input type="text" id="authors" name="authors" required><br /><br />
+
+    <label for="year">Year:</label><br />
+    <input type="text" id="year" name="year" required><br /><br />
+
+    <label for="journal">Journal:</label><br />
+    <input type="text" id="journal" name="journal" required><br /><br />
+
+    <label for="abstract">Abstract:</label><br />
+    <textarea id="abstract" name="abstract" rows="5" cols="40" required></textarea><br /><br />
+
+    <label for="methods">Methods:</label><br />
+    <textarea id="methods" name="methods" rows="5" cols="40" required></textarea><br /><br />
+
+    <label for="findings">Findings:</label><br />
+    <textarea id="findings" name="findings" rows="5" cols="40" required></textarea><br /><br />
+
+    <label for="references">References:</label><br />
+    <textarea id="references" name="references" rows="5" cols="40" required></textarea><br /><br />
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    document.getElementById('researchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const authors = document.getElementById('authors').value.trim().replace(/\s+/g, '');
+      const year = document.getElementById('year').value.trim();
+
+      const journalRaw = document.getElementById('journal').value.trim();
+      const journal = journalRaw
+        .replace(/[^\w\s]/g, '') // Remove punctuation
+        .split(/\s+/)             // Split by whitespace
+        .map((word, index) => index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join('');
+
+      const abstract = document.getElementById('abstract').value;
+      const methods = document.getElementById('methods').value;
+      const findings = document.getElementById('findings').value;
+      const references = document.getElementById('references').value;
+
+      const baseFileName = `${authors}${year}${journal}`;
+
+      const createAndDownloadFile = (content, suffix) => {
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `${baseFileName}_${suffix}.txt`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      };
+
+      createAndDownloadFile(abstract, 'abstract');
+      createAndDownloadFile(methods, 'methods');
+      createAndDownloadFile(findings, 'findings');
+      createAndDownloadFile(references, 'references');
+    });
+  </script>
+</body>
+</html>
