@@ -12,7 +12,24 @@
     #encouragement { margin: 10px 0; font-size: 1.2em; color: green; }
     #emojiFace { font-size: 3em; float: left }
     .clear { clear: both }
+    .left { float: left }
     #mainTitle { font-size: 30px; float: left }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: sans-serif;
+    }
+
+    select, input[type="text"] {
+      padding: 4px;
+      font-size: 14px;
+    }
+
+    #customReason {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -25,13 +42,29 @@
   <h6>Import Data CSV</h6>
   <input type="file" id="csvFile" accept=".csv" />
   <div id="status"></div>
-  <button onclick="saveDecision('yes')">Yes</button>
-  <button onclick="saveDecision('maybe')">Maybe</button>
-  <button onclick="saveDecision('no')">No</button>
+  <button class="left" onclick="saveDecision('yes')">Yes</button>
+  <button class="left" onclick="saveDecision('maybe')">Maybe</button>
+  <div class="form-row">
+    <button id="noButton">No</button>
+
+    <select id="reasonDropdown" style="display: none;">
+      <option value="">--Select reason--</option>
+      <option value="not relevant">Not relevant</option>
+      <option value="duplicate">Duplicate</option>
+      <option value="not about museums">Not about museums</option>
+      <option value="not about visitor experience">Not about visitor experience</option>
+      <option value="other">Other</option>
+    </select>
+
+    <input type="text" id="customReason" placeholder="Type custom reason..." />
+  </div>
+
   <div class="record" id="recordContainer"></div>
   <button onclick="exportProgress()">Export Progress</button>
   <h6>Import Progress Data File</h6>
   <input type="file" id="jsonImport" accept=".json" />
+  <br /><br /><br /><br />
+  <button onclick="clearAllData()">Delete All Data</button>
 
   <script>
     let records = [];
@@ -39,11 +72,17 @@
     let decisions = {};
     let db;
 
-    const openRequest = indexedDB.open("ScreeningDB", 1);
+    const openRequest = indexedDB.open("ScreeningDB", 2);
     openRequest.onupgradeneeded = function(event) {
       db = event.target.result;
       if (!db.objectStoreNames.contains("decisions")) {
         db.createObjectStore("decisions");
+      }
+      if (!db.objectStoreNames.contains("reasons")) {
+        db.createObjectStore("reasons");
+      }
+      if (!db.objectStoreNames.contains("reasonOptions")) {
+        db.createObjectStore("reasonOptions");
       }
     };
 
@@ -86,6 +125,66 @@
       });
     }
 
+    const noButton = document.getElementById('noButton');
+    const reasonDropdown = document.getElementById('reasonDropdown');
+    const customReason = document.getElementById('customReason');
+
+    noButton.addEventListener('click', () => {
+      reasonDropdown.style.display = 'inline-block';
+    });
+
+    reasonDropdown.addEventListener('change', () => {
+      if (reasonDropdown.value === 'other') {
+        customReason.style.display = 'inline-block';
+        customReason.focus();
+      } else {
+        customReason.style.display = 'none';
+        saveReason(reasonDropdown.value);
+        reasonDropdown.style.display = 'none';
+        reasonDropdown.value = "";
+        saveDecision('no');
+      }
+    });
+
+    customReason.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const newReason = customReason.value.trim();
+        if (newReason) {
+          const option = document.createElement('option');
+          option.text = newReason;
+          option.value = newReason;
+          reasonDropdown.add(option);
+          reasonDropdown.value = newReason;
+          customReason.value = '';
+          customReason.style.display = 'none';
+          saveReason(newReason);
+          saveReasonOptionToDB(newReason);
+          reasonDropdown.style.display = 'none';
+          reasonDropdown.value = "";
+          saveDecision('no');
+        }
+      }
+    });
+
+    function saveReason(reason) {
+      const key = records[currentIndex]['Key'];
+      saveReasonToDB(key, reason);
+    }
+
+    function saveReasonToDB(index, value) {
+      const tx = db.transaction("reasons", "readwrite");
+      const store = tx.objectStore("reasons");
+      store.put(value, index);
+    }
+
+    function saveReasonOptionToDB(value) {
+      const tx = db.transaction("reasonOptions", "readwrite");
+      const store = tx.objectStore("reasonOptions");
+      store.put(value, 'reason-'+value);
+    }
+
+
     function saveDecisionToDB(index, value) {
       const tx = db.transaction("decisions", "readwrite");
       const store = tx.objectStore("decisions");
@@ -105,21 +204,41 @@
       reader.readAsText(file);
     });
 
+
+    function importProgressJSON(jsonData) {
+      const tx = db.transaction(['decisions', 'reasons', 'reasonOptions'], 'readwrite');
+
+      ['decisions', 'reasons', 'reasonOptions'].forEach(storeName => {
+        const store = tx.objectStore(storeName);
+        const entries = jsonData[storeName] || {};
+
+        for (const [key, value] of Object.entries(entries)) {
+          store.put(value, key);
+        }
+
+        if (storeName === 'decisions') {
+          // Sync in-memory cache
+          Object.assign(decisions, entries);
+        }
+      });
+
+      tx.oncomplete = () => {
+        showRecord();
+      };
+    }
+
     document.getElementById('jsonImport').addEventListener('change', (event) => {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = (e) => {
         const imported = JSON.parse(e.target.result);
-        const tx = db.transaction("decisions", "readwrite");
-        const store = tx.objectStore("decisions");
-        for (const [key, val] of Object.entries(imported)) {
-          store.put(val, key);
-          decisions[key] = val;
-        }
-        showRecord();
+        importProgressJSON(imported);
       };
       reader.readAsText(file);
     });
+
+
+
 
     function parseCSV(data) {
       const lines = data.split(/\r?\n/);
@@ -266,35 +385,66 @@
     }
 
     function exportProgress() {
-      const tx = db.transaction("decisions", "readonly");
-      const store = tx.objectStore("decisions");
-      const request = store.getAllKeys();
-      const allData = {};
+      const storesToExport = ['decisions', 'reasons', 'reasonOptions'];
+      const exportData = {};
+      let completed = 0;
 
-      request.onsuccess = function() {
-        const keys = request.result;
-        const tx2 = db.transaction("decisions", "readonly");
-        const store2 = tx2.objectStore("decisions");
-        let count = 0;
+      storesToExport.forEach(storeName => {
+        const tx = db.transaction(storeName, "readonly");
+        const store = tx.objectStore(storeName);
 
-        keys.forEach((key) => {
-          const req = store2.get(key);
-          req.onsuccess = function() {
-            allData[key] = req.result;
-            count++;
-            if (count === keys.length) {
-              const blob = new Blob([JSON.stringify(allData)], { type: 'application/json' });
+        const getAllRequest = store.getAll();
+        const getAllKeysRequest = store.getAllKeys();
+
+        getAllRequest.onsuccess = () => {
+          getAllKeysRequest.onsuccess = () => {
+            const values = getAllRequest.result;
+            const keys = getAllKeysRequest.result;
+
+            exportData[storeName] = {};
+            keys.forEach((key, index) => {
+              exportData[storeName][key] = values[index];
+            });
+
+            completed++;
+            if (completed === storesToExport.length) {
+              const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = 'progress.json';
+              a.download = 'screening-progress.json';
               a.click();
               URL.revokeObjectURL(url);
             }
           };
-        });
+        };
+      });
+    }
+
+    function clearAllData() {
+      if (!confirm("Are you sure you want to delete all stored data? This cannot be undone.")) return;
+
+      const tx = db.transaction(['decisions', 'reasons', 'reasonOptions'], 'readwrite');
+
+      ['decisions', 'reasons', 'reasonOptions'].forEach(storeName => {
+        tx.objectStore(storeName).clear();
+      });
+
+      tx.oncomplete = () => {
+        decisions = {};
+        currentIndex = 0;
+        alert("All data cleared.");
+        showRecord();
+        updateStatus();
+        document.getElementById('encouragement').textContent = "";
+        document.getElementById('emojiFace').textContent = "😐";
+      };
+
+      tx.onerror = () => {
+        alert("Failed to clear data.");
       };
     }
+
   </script>
 </body>
 </html>
