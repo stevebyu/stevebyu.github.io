@@ -31,6 +31,8 @@
       display: none;
     }
   </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#317EFB">
 </head>
 <body>
   <div id="topBanner">
@@ -461,6 +463,13 @@
       tx.onerror = () => {
         alert("Failed to clear data.");
       };
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then(() => console.log("Service Worker registered"))
+        .catch((err) => console.error("Service Worker registration failed:", err));
     }
 
   </script>
