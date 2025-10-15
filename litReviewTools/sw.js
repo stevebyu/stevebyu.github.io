@@ -1,11 +1,7 @@
 const CACHE_NAME = "pwa-cache-v1";
 const urlsToCache = [
   "/",
-  "/index.html",
-  "/style.css",
-  "/app.js",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png"
+  "/screen.html"
 ];
 
 // Install SW and cache files
