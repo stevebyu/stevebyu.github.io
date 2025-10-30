@@ -1,7 +1,7 @@
 {
   "name": "Zotero Exports Screening Tool",
   "short_name": "ZEST",
-  "start_url": ".",
+  "start_url": "./screen.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#317EFB",
