@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zotero Exports Screening Tool</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .record { margin-bottom: 20px; }
+    button { margin-right: 10px; padding: 10px 20px; }
+    #status { margin: 20px 0; font-weight: bold; }
+    #encouragement { margin: 10px 0; font-size: 1.2em; color: green; }
+    #emojiFace { font-size: 3em; float: left }
+    .clear { clear: both }
+    .left { float: left }
+    #mainTitle { font-size: 30px; float: left }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: sans-serif;
+    }
+
+    select, input[type="text"] {
+      padding: 4px;
+      font-size: 14px;
+    }
+
+    .hlgreen {
+      background-color: green;
+    }
+
+    .hlred {
+      background-color: red;
+    }
+
+    .hlHotPink {
+      background-color: HotPink;
+    }
+
+    .hlgold {
+      background-color: gold;
+    }
+
+    #customReason {
+      display: none;
+    }
+  </style>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#317EFB">
+</head>
+<body>
+  <div id="topBanner">
+    <div id="mainTitle">Zotero Exports Screening Tool</div>
+    <div id="emojiFace">😐</div>
+    <div id="encouragement"></div>
+  </div>
+  <br class="clear" />
+  <h6>Import Data CSV</h6>
+  <input type="file" id="csvFile" accept=".csv" />
+  <div id="status"></div>
+  <button class="left" onclick="saveDecision('yes')">Yes</button>
+  <button class="left" onclick="saveDecision('maybe')">Maybe</button>
+  <div class="form-row">
+    <button id="noButton">No</button>
+
+    <select id="reasonDropdown" style="display: none;">
+      <option value="">--Select reason--</option>
+      <option value="not relevant">Not relevant</option>
+      <option value="duplicate">Duplicate</option>
+      <option value="not about museums">Not about museums</option>
+      <option value="not about visitor experience">Not about visitor experience</option>
+      <option value="not in english">Not in English</option>
+      <option value="proceedings of a conference">Proceedings of a Conference</option>
+      <option value="retracted by journal">Retracted by Journal</option>
+      <option value="concept/framework piece">Concept/Framework Piece</option>
+      <option value="other">Other</option>
+    </select>
+
+    <input type="text" id="customReason" placeholder="Type custom reason..." />
+  </div>
+
+  <div class="record" id="recordContainer"></div>
+  <button onclick="exportProgress()">Export Progress</button>
+  <h6>Import Progress Data File</h6>
+  <input type="file" id="jsonImport" accept=".json" />
+  <br /><br /><br /><br />
+  <button onclick="clearAllData()">Delete All Data</button>
+
+  <script>
+    let records = [];
+    let currentIndex = 0;
+    let decisions = {};
+    let db;
+
+    const openRequest = indexedDB.open("ScreeningDB", 2);
+    openRequest.onupgradeneeded = function(event) {
+      db = event.target.result;
+      if (!db.objectStoreNames.contains("decisions")) {
+        db.createObjectStore("decisions");
+      }
+      if (!db.objectStoreNames.contains("reasons")) {
+        db.createObjectStore("reasons");
+      }
+      if (!db.objectStoreNames.contains("reasonOptions")) {
+        db.createObjectStore("reasonOptions");
+      }
+    };
+
+    openRequest.onsuccess = function(event) {
+      db = event.target.result;
+      loadDecisions().then(() => showRecord());
+    };
+
+    openRequest.onerror = function() {
+      console.error("IndexedDB error");
+    };
+
+    function loadDecisions() {
+      return new Promise((resolve) => {
+        const tx = db.transaction("decisions", "readonly");
+        const store = tx.objectStore("decisions");
+        const request = store.getAllKeys();
+
+        request.onsuccess = function() {
+          const keys = request.result;
+          const tx2 = db.transaction("decisions", "readonly");
+          const store2 = tx2.objectStore("decisions");
+
+          currentIndex = Object.keys(decisions).length;
+
+          let loaded = 0;
+          keys.forEach(key => {
+            const req = store2.get(key);
+            req.onsuccess = function() {
+              decisions[key] = req.result;
+              loaded++;
+              if (loaded === keys.length) {
+                resolve();
+              }
+            };
+          });
+
+          if (keys.length === 0) resolve();
+        };
+      });
+    }
+
+    const noButton = document.getElementById('noButton');
+    const reasonDropdown = document.getElementById('reasonDropdown');
+    const customReason = document.getElementById('customReason');
+
+    noButton.addEventListener('click', () => {
+      reasonDropdown.style.display = 'inline-block';
+    });
+
+    reasonDropdown.addEventListener('change', () => {
+      if (reasonDropdown.value === 'other') {
+        customReason.style.display = 'inline-block';
+        customReason.focus();
+      } else {
+        customReason.style.display = 'none';
+        saveReason(reasonDropdown.value);
+        reasonDropdown.style.display = 'none';
+        reasonDropdown.value = "";
+        saveDecision('no');
+      }
+    });
+
+    customReason.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const newReason = customReason.value.trim();
+        if (newReason) {
+          const option = document.createElement('option');
+          option.text = newReason;
+          option.value = newReason;
+          reasonDropdown.add(option);
+          reasonDropdown.value = newReason;
+          customReason.value = '';
+          customReason.style.display = 'none';
+          saveReason(newReason);
+          saveReasonOptionToDB(newReason);
+          reasonDropdown.style.display = 'none';
+          reasonDropdown.value = "";
+          saveDecision('no');
+        }
+      }
+    });
+
+    function saveReason(reason) {
+      const key = records[currentIndex]['Key'];
+      saveReasonToDB(key, reason);
+    }
+
+    function saveReasonToDB(index, value) {
+      const tx = db.transaction("reasons", "readwrite");
+      const store = tx.objectStore("reasons");
+      store.put(value, index);
+    }
+
+    function saveReasonOptionToDB(value) {
+      const tx = db.transaction("reasonOptions", "readwrite");
+      const store = tx.objectStore("reasonOptions");
+      store.put(value, 'reason-'+value);
+    }
+
+
+    function saveDecisionToDB(index, value) {
+      const tx = db.transaction("decisions", "readwrite");
+      const store = tx.objectStore("decisions");
+      store.put(value, index);
+    }
+
+    document.getElementById('csvFile').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        records = parseCSV(text);
+        showRecord();
+      };
+      currentIndex = Object.keys(decisions).length;
+
+      reader.readAsText(file);
+    });
+
+
+    function importProgressJSON(jsonData) {
+      const tx = db.transaction(['decisions', 'reasons', 'reasonOptions'], 'readwrite');
+
+      ['decisions', 'reasons', 'reasonOptions'].forEach(storeName => {
+        const store = tx.objectStore(storeName);
+        const entries = jsonData[storeName] || {};
+
+        for (const [key, value] of Object.entries(entries)) {
+          store.put(value, key);
+        }
+
+        if (storeName === 'decisions') {
+          // Sync in-memory cache
+          Object.assign(decisions, entries);
+        }
+      });
+
+      tx.oncomplete = () => {
+        showRecord();
+      };
+    }
+
+    document.getElementById('jsonImport').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imported = JSON.parse(e.target.result);
+        importProgressJSON(imported);
+      };
+      reader.readAsText(file);
+    });
+
+
+
+
+    function parseCSV(data) {
+      const lines = data.split(/\r?\n/);
+      const result = [];
+      const headers = parseCSVLine(lines[0]);
+      for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const values = parseCSVLine(lines[i]);
+        const obj = {};
+        headers.forEach((h, j) => obj[h] = values[j] || '');
+        result.push(obj);
+      }
+      return result;
+    }
+
+    function parseCSVLine(line) {
+      const regex = /"([^"]*(?:""[^"]*)*)"|([^,]+)/g;
+      const result = [];
+      let match;
+      while ((match = regex.exec(line)) !== null) {
+        if (match[1] !== undefined) {
+          result.push(match[1].replace(/""/g, '"'));
+        } else if (match[2] !== undefined) {
+          result.push(match[2]);
+        } else {
+          result.push('');
+        }
+      }
+      return result;
+    }
+
+    function showRecord() {
+      while (currentIndex < records.length && decisions[currentIndex]) {
+        currentIndex++;
+      }
+      updateStatus();
+
+      var record = records[currentIndex];
+      if (!record) {
+        document.getElementById('recordContainer').innerHTML = '<p>No records.</p>';
+        return;
+      }
+
+      record = highlightUser(record, 'user', 'green');
+      record = highlightVisitor(record, 'visitor', 'HotPink');
+      record = highlightStudy(record, 'study', 'red');
+      record = highlightPaper(record, 'paper', 'red');
+      record = highlightExperience(record, 'experience', 'gold');
+
+      document.getElementById('recordContainer').innerHTML = `
+        <p><strong>Author:</strong> ${record['Author'] || ''}</p>
+        <p><strong>Publication Year:</strong> ${record['Publication Year'] || ''}</p>
+        <p><strong>Publication Title:</strong> ${record['Publication Title'] || ''}</p>
+        <p><strong>Title:</strong> ${record['Title'] || ''}</p>
+        <p><strong>Abstract Note:</strong> ${record['Abstract Note'] || ''}</p>
+      `;
+
+    }
+
+    function highlightUser(record, searchTerm, className) {
+      const regex = /user/gi;
+      record['Title'] = record['Title'].replaceAll(regex, `<span class='hl${className}'>user</span>`);
+      return record;
+    }
+
+    function highlightVisitor(record, searchTerm, className) {
+      const regex = /visitor/gi;
+      record['Title'] = record['Title'].replaceAll(regex, `<span class='hl${className}'>visitor</span>`);
+      return record;
+    }
+
+    function highlightPaper(record, searchTerm, className) {
+      const regex = /paper/gi;
+      record['Title'] = record['Title'].replaceAll(regex, `<span class='hl${className}'>paper</span>`);
+      return record;
+    }
+
+    function highlightStudy(record, searchTerm, className) {
+      const regex = /study/gi;
+      record['Title'] = record['Title'].replaceAll(regex, `<span class='hl${className}'>study</span>`);
+      return record;
+    }
+
+    function highlightExperience(record, searchTerm, className) {
+      const regex = /experience/gi;
+      record['Title'] = record['Title'].replaceAll(regex, `<span class='hl${className}'>experience</span>`);
+      return record;
+    }
+
+    function saveDecision(decision) {
+      if (!records[currentIndex]) return;
+      decisions[currentIndex] = decision;
+      const key = records[currentIndex]['Key'];
+      saveDecisionToDB(key, decision);
+      currentIndex++;
+      showEncouragement();
+      showRecord();
+    }
+
+    function showEncouragement() {
+      const reviewed = Object.keys(decisions).length;
+      const howManyBetweenEncouragements = 10;
+      const messageIndex = Math.floor(reviewed / howManyBetweenEncouragements);
+      const goodJobMessages = [
+        // Genuine & Encouraging
+        "Great job—your hard work really shows!",
+        "You nailed it!",
+        "Outstanding performance—keep it up!",
+        "That was a job well done.",
+        "You’ve outdone yourself this time.",
+        "Your effort made all the difference.",
+        "Bravo! You handled that like a pro.",
+        "That was impressive—seriously!",
+        "You crushed it.",
+        "I knew you could do it!",
+
+        // Warm & Supportive
+        "You’re really shining today!",
+        "Gold star for you! ⭐",
+        "That was smooth and solid—well done!",
+        "You’re making this look easy.",
+        "You're on a roll!",
+        "That deserves a round of applause 👏",
+        "I’m proud of the way you handled that.",
+        "Excellence suits you.",
+        "That was a 10/10 moment!",
+        "Keep climbing—you’re doing great.",
+
+        // Fun & Playful
+        "That was so good I thought it was CGI.",
+        "Did you eat excellence for breakfast?",
+        "You crushed that like a soda can.",
+        "That was fire—🔥🔥🔥",
+        "You’re basically a wizard at this point.",
+        "Look at you, being all awesome and stuff.",
+        "That was smoother than jazz on Sunday morning.",
+        "Someone call the award committee!",
+        "Can I get your autograph after that performance?",
+        "You just raised the bar... again.",
+
+        // Quick Praise
+        "Nice one!",
+        "Love that energy.",
+        "Way to go!",
+        "Keep that momentum!",
+        "Boom—just like that!",
+        "That’s what I’m talking about.",
+        "Clean, clear, and clever—nice!",
+        "You make it look easy.",
+        "Smooth move!",
+        "Every step you're taking is solid gold.",
+
+        // Extra-Encouraging
+        "That was legendary.",
+        "Seriously, how do you keep leveling up like this?",
+        "You’re absolutely crushing your goals!",
+        "If success had a face, it’d be yours.",
+        "Your dedication is next-level.",
+        "Just when I think you’ve peaked, you prove me wrong.",
+        "You turned challenge into triumph.",
+        "That was nothing short of excellence.",
+        "You're basically a one-person success team.",
+        "Let’s call it what it is: amazing."
+      ];
+
+      let msg = goodJobMessages[messageIndex];
+
+      const emojiEl = document.getElementById('emojiFace');
+      if (reviewed < 25) emojiEl.textContent = "☹️";
+      else if (reviewed < 50) emojiEl.textContent = "😐";
+      else if (reviewed < 75) emojiEl.textContent = "🙂";
+      else emojiEl.textContent = "😄";
+
+      document.getElementById('encouragement').textContent = msg;
+    }
+
+    function updateStatus() {
+      const reviewed = Object.keys(decisions).length;
+      const pending = records.length - reviewed;
+      const percentage = Math.round((reviewed / records.length) * 100, 2);
+      document.getElementById('status').textContent = `Reviewed: ${reviewed} / ${records.length} (${percentage}%) | Pending: ${pending}`;
+    }
+
+    function exportProgress() {
+      const storesToExport = ['decisions', 'reasons', 'reasonOptions'];
+      const exportData = {};
+      let completed = 0;
+
+      storesToExport.forEach(storeName => {
+        const tx = db.transaction(storeName, "readonly");
+        const store = tx.objectStore(storeName);
+
+        const getAllRequest = store.getAll();
+        const getAllKeysRequest = store.getAllKeys();
+
+        getAllRequest.onsuccess = () => {
+          getAllKeysRequest.onsuccess = () => {
+            const values = getAllRequest.result;
+            const keys = getAllKeysRequest.result;
+
+            exportData[storeName] = {};
+            keys.forEach((key, index) => {
+              exportData[storeName][key] = values[index];
+            });
+
+            completed++;
+            if (completed === storesToExport.length) {
+              var d = new Date();
+              var year = d.getFullYear();
+              var month = d.getMonth() + 1;
+              var date = d.getDate();
+              var hour = d.getHours();
+              var minute = d.getMinutes();
+              var second = d.getSeconds();
+              if (month < 10) month = "0" + month;
+              if (date < 10) date = "0" + date;
+              if (hour < 10) hour = "0" + hour;
+              if (minute < 10) minute = "0" + minute;
+              if (second < 10) second = "0" + second;
+              var time = year + month + date + "-" + hour + minute + second;
+
+              const blob = new Blob([JSON.stringify(exportData)], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'screening-progress'+time+'.json';
+              a.click();
+              URL.revokeObjectURL(url);
+            }
+          };
+        };
+      });
+    }
+
+    function clearAllData() {
+      if (!confirm("Are you sure you want to delete all stored data? This cannot be undone.")) return;
+
+      const tx = db.transaction(['decisions', 'reasons', 'reasonOptions'], 'readwrite');
+
+      ['decisions', 'reasons', 'reasonOptions'].forEach(storeName => {
+        tx.objectStore(storeName).clear();
+      });
+
+      tx.oncomplete = () => {
+        decisions = {};
+        currentIndex = 0;
+        alert("All data cleared.");
+        showRecord();
+        updateStatus();
+        document.getElementById('encouragement').textContent = "";
+        document.getElementById('emojiFace').textContent = "😐";
+      };
+
+      tx.onerror = () => {
+        alert("Failed to clear data.");
+      };
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("./sw.js")
+        .then(() => console.log("Service Worker registered"))
+        .catch((err) => console.error("Service Worker registration failed:", err));
+    }
+
+  </script>
+</body>
+</html>
